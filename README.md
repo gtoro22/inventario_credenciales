@@ -80,6 +80,13 @@ php artisan serve    # http://localhost:8000
 # o sin Vite en caliente:  npm run build && php artisan serve
 ```
 
+### Con Docker
+Base de datos, backend y frontend dockerizados (MySQL + PHP-FPM + nginx con los assets compilados + scheduler):
+```bash
+make init && make up && make install     # luego http://localhost:8080
+```
+Detalle, modo desarrollo con HMR y recomendaciones en **[docs/DOCKER.md](docs/DOCKER.md)**.
+
 ### Otros comandos
 | Comando | Uso |
 |---|---|
@@ -106,6 +113,8 @@ resources/js/                      # app.jsx, Layouts/, Pages/, components/, lib
 routes/{web,api,console}.php
 tests/{Unit,Feature}
 docs/API.md                        # documentación de endpoints
+docs/DOCKER.md                     # guía de Docker
+Dockerfile, compose.yaml, compose.dev.yaml, docker/, Makefile
 ```
 
 ## Modelo de datos

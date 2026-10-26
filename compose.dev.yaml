@@ -1,0 +1,50 @@
+# Desarrollo con recarga en caliente:
+#   docker compose --env-file .env.docker -f compose.yaml -f compose.dev.yaml up --build
+# - El código se monta desde el host (cambios PHP al instante).
+# - Vite sirve el frontend con HMR en http://localhost:5173.
+services:
+  app:
+    build: { context: ., target: dev }
+    image: credential-vault/app-dev:latest
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+    volumes:
+      - ./:/var/www/html
+      - /var/www/html/node_modules
+    user: "${UID:-1000}:${GID:-1000}"
+    command: ["php-fpm"]
+
+  scheduler:
+    image: credential-vault/app-dev:latest
+    volumes:
+      - ./:/var/www/html
+
+  web:
+    volumes:
+      - ./public:/var/www/html/public:ro
+
+  # Instala dependencias PHP la primera vez:  docker compose ... run --rm composer install
+  composer:
+    image: credential-vault/app-dev:latest
+    profiles: ["tools"]
+    entrypoint: ["composer"]
+    volumes:
+      - ./:/var/www/html
+    networks: [backend]
+
+  vite:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_HMR_HOST: localhost
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+    networks: [backend]
+
+volumes:
+  node_modules:

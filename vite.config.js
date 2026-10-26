@@ -11,6 +11,8 @@ export default defineConfig({
         react(),
     ],
     server: {
+        // En Docker (compose.dev.yaml) Vite escucha en 0.0.0.0 y el HMR apunta al host.
+        hmr: process.env.VITE_HMR_HOST ? { host: process.env.VITE_HMR_HOST } : undefined,
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
